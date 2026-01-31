@@ -53,16 +53,24 @@ jobs:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/invoiceflow_test
       run: |
         cd backend
-        python seed_database.py
+        python -m scripts.seed_database
 
     - name: Run tests
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/invoiceflow_test
       run: |
         cd backend
-        python test_pipeline.py
-        python test_db_workflow.py
-        python test_phase4.py
+        python -m tests.test_pipeline
+        python -m tests.test_db_workflow
+        python -m tests.test_phase4
+
+    - name: Start API Server
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/invoiceflow_test
+      run: |
+        cd backend
+        nohup uvicorn main:app --port 8000 &
+        sleep 10
 
     - name: Run E2E tests
       env:
